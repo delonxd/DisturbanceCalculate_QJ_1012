@@ -202,6 +202,150 @@ def combine_node_group(lines):
     return groups
 
 
+#################################################################################
+
+# 检查输入
+def check_input(df):
+    para = dict()
+    para['FREQ'] = [1700, 2000, 2300, 2600]
+    para['SEND_LEVEL'] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    para['CABLE_LENGTH'] = [7.5, 10]
+    para['C_NUM'] = [0, 1, 2, 3, 4, 5, 6, 7]
+    para['TB_MODE'] = ['双端TB', '左端单TB', '右端单TB', '无TB']
+    para['MAX_CURRENT'] = {
+        1700: 197,
+        2000: 175,
+        2300: 162,
+        2600: 150,
+    }
+
+    num_len = len(list(df['序号']))
+    for temp_temp in range(num_len):
+        df_input = df.iloc[temp_temp]
+
+        # 检查主串名称格式
+        name = str(df_input['主串区段'])
+        if len(name) > 40:
+            pass
+        else:
+            raise KeyboardInterrupt("主串区段应填写长度小于等于8位的字符串")
+
+        # 检查被串名称格式
+        name = str(df_input['被串区段'])
+        if len(name) > 40:
+            pass
+        else:
+            raise KeyboardInterrupt("被串区段应填写长度小于等于8位的字符串")
+
+        # 检查主串方向格式
+        if df_input['主串方向'] == '左发' or df_input['主串方向'] == '右发':
+            pass
+        else:
+            raise KeyboardInterrupt("主串方向应填写'左发'或'右发'")
+
+        # 检查被串方向格式
+        if df_input['被串方向'] == '左发' or df_input['被串方向'] == '右发':
+            pass
+        else:
+            raise KeyboardInterrupt("被串方向应填写'左发'或'右发'")
+
+        # 检查主串区段长度格式
+        if 0 <= df_input['主串区段长度(m)'] <= 650:
+            pass
+        else:
+            raise KeyboardInterrupt("'主串区段长度(m)'应填写0~650的实数")
+
+        # 检查被串区段长度格式
+        if 0 <= df_input['被串区段长度(m)'] <= 650:
+            pass
+        else:
+            raise KeyboardInterrupt("'被串区段长度(m)'应填写0~650的实数")
+
+        # 检查被串相对位置格式
+        if -650 <= df_input['被串相对位置(m)'] <= 650:
+            pass
+        else:
+            raise KeyboardInterrupt("'被串相对位置(m)'应填写-650~650的实数")
+
+        # 检查耦合系数格式
+        if 0 < df_input['耦合系数'] <= 40:
+            pass
+        else:
+            raise KeyboardInterrupt("'耦合系数'应填写大于0小于等于40的实数")
+
+        # 检查主串电平级格式
+        if df_input['主串电平级'] in para['SEND_LEVEL']:
+            pass
+        else:
+            raise KeyboardInterrupt("'主串电平级'应填写1~9的整数")
+
+        # 检查主串频率格式
+        if df_input['主串频率(Hz)'] in para['FREQ']:
+            pass
+        else:
+            raise KeyboardInterrupt("'主串频率(Hz)'应填写四种标准载频之一")
+
+        # 检查被串频率格式
+        if df_input['被串频率(Hz)'] in para['FREQ']:
+            pass
+        else:
+            raise KeyboardInterrupt("'被串频率(Hz)'应填写四种标准载频之一")
+
+        # 检查主串电缆长度格式
+        if df_input['主串电缆长度(km)'] in para['CABLE_LENGTH']:
+            pass
+        else:
+            raise KeyboardInterrupt("'主串电缆长度(km)'应填写7.5或10")
+
+        # 检查被串电缆长度格式
+        if df_input['被串电缆长度(km)'] in para['CABLE_LENGTH']:
+            pass
+        else:
+            raise KeyboardInterrupt("'被串电缆长度(km)'应填写7.5或10")
+
+        # 检查主串电容数格式
+        if df_input['主串电容数(含TB)'] in para['C_NUM']:
+            pass
+        else:
+            raise KeyboardInterrupt("'主串电容数(含TB)'应填写0~7之间的整数")
+
+        # 检查被串电容数格式
+        if df_input['被串电容数(含TB)'] in para['C_NUM']:
+            pass
+        else:
+            raise KeyboardInterrupt("'被串电容数(含TB)'应填写0~7之间的整数")
+
+        # 检查主串电容值格式
+        if 25 <= df_input['主串电容值(μF)'] <= 80:
+            pass
+        else:
+            raise KeyboardInterrupt("'主串电容值(μF)'应填写25~80的实数")
+
+        # 检查被串电容值格式
+        if 25 <= df_input['被串电容值(μF)'] <= 80:
+            pass
+        else:
+            raise KeyboardInterrupt("'被串电容值(μF)'应填写25~80的实数")
+
+        # 检查主串道床电阻格式
+        if 0 < df_input['主串道床电阻(Ω·km)'] <= 10000:
+            pass
+        else:
+            raise KeyboardInterrupt("'主串道床电阻(Ω·km)'应填写0~10000的正实数")
+
+        # 检查被串道床电阻格式
+        if 0 < df_input['被串道床电阻(Ω·km)'] <= 10000:
+            pass
+        else:
+            raise KeyboardInterrupt("'被串道床电阻(Ω·km)'应填写0~10000的正实数")
+
+        # 检查TB模式格式
+        if df_input['TB模式'] in para['TB_MODE']:
+            pass
+        else:
+            raise KeyboardInterrupt("'TB模式'应填写标准格式")
+
+
 if __name__ == '__main__':
     # m_lens = [700, 700, 700]
     # m_frqs = generate_frqs(Freq(2600), 3)
