@@ -59,19 +59,6 @@ class RowData:
         df_input, para, data = self.read_parameters()
 
         if pd_read_flag:
-
-            # 检查主串区段长度格式
-            if 0 <= df_input['主串区段长度(m)'] <= 650:
-                pass
-            else:
-                raise KeyboardInterrupt("'主串区段长度(m)'应填写0~650的实数")
-
-            # 检查被串区段长度格式
-            if 0 <= df_input['被串区段长度(m)'] <= 650:
-                pass
-            else:
-                raise KeyboardInterrupt("'被串区段长度(m)'应填写0~650的实数")
-
             data['主串区段长度(m)'] = para['主串区段长度'] = df_input['主串区段长度(m)']
             data['被串区段长度(m)'] = para['被串区段长度'] = df_input['被串区段长度(m)']
         else:
@@ -106,12 +93,6 @@ class RowData:
         #     data['被串左端里程标'] = para['offset_bei'] = offset
 
         if pd_read_flag:
-
-            # 检查被串相对位置格式
-            if -650 <= df_input['被串相对位置(m)'] <= 650:
-                pass
-            else:
-                raise KeyboardInterrupt("'被串相对位置(m)'应填写应填写-650~650的实数")
             data['被串相对位置(m)'] = df_input['被串相对位置(m)']
 
             data['主串左端里程标'] = para['offset_zhu'] = 0
@@ -128,13 +109,6 @@ class RowData:
         df_input, para, data = self.read_parameters()
 
         if pd_read_flag:
-
-            # 检查耦合系数格式
-            if 0 < df_input['耦合系数'] <= 40:
-                pass
-            else:
-                raise KeyboardInterrupt("'耦合系数'应填写大于0小于等于40的实数")
-
             # data['线间距'] = para['线间距'] = df_input['线间距']
             data['耦合系数'] = para['耦合系数'] = df_input['耦合系数']
         else:
@@ -148,19 +122,6 @@ class RowData:
         df_input, para, data = self.read_parameters()
 
         if pd_read_flag:
-
-            # 检查主串频率格式
-            if df_input['主串频率(Hz)'] in para['FREQ']:
-                pass
-            else:
-                raise KeyboardInterrupt("'主串频率(Hz)'应填写四种标准载频之一")
-
-            # 检查被串频率格式
-            if df_input['被串频率(Hz)'] in para['FREQ']:
-                pass
-            else:
-                raise KeyboardInterrupt("'被串频率(Hz)'应填写四种标准载频之一")
-
             data['主串频率(Hz)'] = para['freq_主'] = freq = df_input['主串频率(Hz)']
             data['被串频率(Hz)'] = para['freq_被'] = df_input['被串频率(Hz)']
         else:
@@ -179,19 +140,6 @@ class RowData:
         # data['主串电容数'] = para['主串电容数'] = get_c_num(Freq(data['主串频率']), data['区段长度'])
         # data['被串电容数'] = para['被串电容数'] = get_c_num(Freq(data['被串频率']), data['区段长度'])
         if pd_read_flag:
-
-            # 检查主串电容数格式
-            if df_input['主串电容数(含TB)'] in para['C_NUM']:
-                pass
-            else:
-                raise KeyboardInterrupt("'主串电容数(含TB)'应填写0~7之间的整数")
-
-            # 检查被串电容数格式
-            if df_input['被串电容数(含TB)'] in para['C_NUM']:
-                pass
-            else:
-                raise KeyboardInterrupt("'被串电容数(含TB)'应填写0~7之间的整数")
-
             data['主串电容数(含TB)'] = para['主串电容数'] = df_input['主串电容数(含TB)']
             data['被串电容数(含TB)'] = para['被串电容数'] = df_input['被串电容数(含TB)']
         else:
@@ -248,19 +196,6 @@ class RowData:
         df_input, para, data = self.read_parameters()
 
         if pd_read_flag:
-
-            # 检查主串电容值格式
-            if 25 <= df_input['主串电容值(μF)'] <= 80:
-                pass
-            else:
-                raise KeyboardInterrupt("'主串电容值(μF)'应填写25~80的实数")
-
-            # 检查被串电容值格式
-            if 25 <= df_input['被串电容值(μF)'] <= 80:
-                pass
-            else:
-                raise KeyboardInterrupt("'被串电容值(μF)'应填写25~80的实数")
-
             data['主串电容值(μF)'] = c_value1 = df_input['主串电容值(μF)']
             data['被串电容值(μF)'] = c_value2 = df_input['被串电容值(μF)']
         else:
@@ -409,19 +344,6 @@ class RowData:
 
         if respectively:
             if pd_read_flag:
-
-                # 检查主串道床电阻格式
-                if 0 < df_input['主串道床电阻(Ω·km)'] <= 10000:
-                    pass
-                else:
-                    raise KeyboardInterrupt("'主串道床电阻(Ω·km)'应填写0~10000的正实数")
-
-                # 检查被串道床电阻格式
-                if 0 < df_input['被串道床电阻(Ω·km)'] <= 10000:
-                    pass
-                else:
-                    raise KeyboardInterrupt("'被串道床电阻(Ω·km)'应填写0~10000的正实数")
-
                 data['主串道床电阻(Ω·km)'] = df_input['主串道床电阻(Ω·km)']
                 data['被串道床电阻(Ω·km)'] = df_input['被串道床电阻(Ω·km)']
             else:
@@ -508,13 +430,6 @@ class RowData:
         # pd_read_flag = False
 
         if pd_read_flag:
-
-            # 检查TB模式格式
-            if df_input['TB模式'] in para['TB_MODE']:
-                pass
-            else:
-                raise KeyboardInterrupt("'TB模式'应填写标准格式")
-
             data['TB模式'] = flag_tb = df_input['TB模式']
         else:
             data['TB模式'] = flag_tb = tb_mode
@@ -552,17 +467,6 @@ class RowData:
         # data['被串发送器位置'] = para['sr_mod_被'] = sr_bei
 
         if pd_read_flag:
-
-            if df_input['主串方向'] == '左发' or df_input['主串方向'] == '右发':
-                pass
-            else:
-                raise KeyboardInterrupt("主串方向应填写'左发'或'右发'")
-
-            if df_input['被串方向'] == '左发' or df_input['被串方向'] == '右发':
-                pass
-            else:
-                raise KeyboardInterrupt("被串方向应填写'左发'或'右发'")
-
             # data['主串方向'] = flag_zhu = df_input['主串方向']
             # data['被串方向'] = flag_bei = df_input['被串方向']
             #
@@ -634,19 +538,6 @@ class RowData:
         if respectively:
             para['cab_len'] = len_zhu
             if pd_read_flag:
-
-                # 检查主串电缆长度格式
-                if df_input['主串电缆长度(km)'] in para['CABLE_LENGTH']:
-                    pass
-                else:
-                    raise KeyboardInterrupt("'主串电缆长度(km)'应填写7.5或10")
-
-                # 检查被串电缆长度格式
-                if df_input['被串电缆长度(km)'] in para['CABLE_LENGTH']:
-                    pass
-                else:
-                    raise KeyboardInterrupt("'被串电缆长度(km)'应填写7.5或10")
-
                 data['主串电缆长度(km)'] = para['主串电缆长度'] = df_input['主串电缆长度(km)']
                 data['被串电缆长度(km)'] = para['被串电缆长度'] = df_input['被串电缆长度(km)']
             else:
@@ -687,13 +578,6 @@ class RowData:
         df_input, para, data = self.read_parameters()
 
         if pd_read_flag:
-
-            # 检查主串电平级格式
-            if df_input['主串电平级'] in para['SEND_LEVEL']:
-                pass
-            else:
-                raise KeyboardInterrupt("'主串电平级'应填写1~9的整数")
-
             data['主串电平级'] = para['send_level'] = df_input['主串电平级']
         else:
             data['主串电平级'] = para['send_level'] = send_level
