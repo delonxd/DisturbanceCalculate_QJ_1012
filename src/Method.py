@@ -212,12 +212,7 @@ def check_input(df):
     para['CABLE_LENGTH'] = [7.5, 10]
     para['C_NUM'] = [0, 1, 2, 3, 4, 5, 6, 7]
     para['TB_MODE'] = ['双端TB', '左端单TB', '右端单TB', '无TB']
-    para['MAX_CURRENT'] = {
-        1700: 197,
-        2000: 175,
-        2300: 162,
-        2600: 150,
-    }
+
 
     num_len = len(list(df['序号']))
     for temp_temp in range(num_len):
@@ -225,14 +220,14 @@ def check_input(df):
 
         # 检查主串名称格式
         name = str(df_input['主串区段'])
-        if len(name) > 40:
+        if len(name) <= 8:
             pass
         else:
             raise KeyboardInterrupt("主串区段应填写长度小于等于8位的字符串")
 
         # 检查被串名称格式
         name = str(df_input['被串区段'])
-        if len(name) > 40:
+        if len(name) <= 8:
             pass
         else:
             raise KeyboardInterrupt("被串区段应填写长度小于等于8位的字符串")
