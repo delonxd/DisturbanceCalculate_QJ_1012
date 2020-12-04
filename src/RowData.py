@@ -98,8 +98,10 @@ class RowData:
             data['主串左端里程标'] = para['offset_zhu'] = 0
             data['被串左端里程标'] = para['offset_bei'] = df_input['被串相对位置(m)']
         else:
-            data['主串左端里程标'] = para['offset_zhu'] = offset
+            data['主串左端里程标'] = para['offset_zhu'] = 0
             data['被串左端里程标'] = para['offset_bei'] = offset
+
+            data['被串相对位置(m)'] = offset
 
 
     #################################################################################
@@ -484,6 +486,10 @@ class RowData:
 
             data['主串方向'] = para['sr_mod_主'] = df_input['主串方向']
             data['被串方向'] = para['sr_mod_被'] = df_input['被串方向']
+
+        else:
+            data['主串方向'] = para['sr_mod_主'] = sr_zhu
+            data['被串方向'] = para['sr_mod_被'] = sr_bei
 
         # # 发码方向
         # if pd_read_flag:

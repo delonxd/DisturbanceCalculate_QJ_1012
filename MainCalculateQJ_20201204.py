@@ -25,24 +25,13 @@ def main_cal(path1, path2, path3):
     #################################################################################
 
     # 参数输入
-    # df_input = pd.read_excel('邻线干扰参数输入_v0.3.1.xlsx')
-    # df_input = pd.read_excel('邻线干扰参数输入_拆电容.xlsx')
-    # df_input = pd.read_excel('邻线干扰参数输入_电码化.xlsx')
-    # df_input = pd.read_excel('邻线干扰参数输入_v0.4.xlsx')
-    # df_input = pd.read_excel('邻线干扰参数输入_移频脉冲_v0.2.xlsx')
-    # df_input = pd.read_excel('ZPW-2000A一体化邻线干扰参数输入表格_v0.4.0.xlsx')
-    # df_input = pd.read_excel('邻线干扰参数输入_2000A一体化_v0.4.xlsx')
-    # df_input = pd.read_excel('邻线干扰参数输入_韩家岭.xlsx')
-    # df_input = pd.read_excel('邻线干扰参数输入_20200730.xlsx')
-    # df_input = pd.read_excel('邻线干扰参数输入_20200806.xlsx')
-    # df_input = pd.read_excel('邻线干扰参数输入_BPLN.xlsx')
 
     df_input = pd.read_excel(path1)
     df_input = df_input.where(df_input.notnull(), None)
     num_len = len(list(df_input['序号']))
 
     # 检查输入格式
-    check_input(df_input)
+    # check_input(df_input)
 
     #################################################################################
 
@@ -72,25 +61,6 @@ def main_cal(path1, path2, path3):
         2000: [1.306, 1.304e-3, None],
         2300: [1.435, 1.297e-3, None],
         2600: [1.558, 1.291e-3, None]}
-
-    # trk_2000A_21 = ImpedanceMultiFreq()
-    # trk_2000A_21.rlc_s = {
-    #     1700: [1.71, 1.36e-3, None],
-    #     2000: [1.90, 1.35e-3, None],
-    #     2300: [2.04, 1.34e-3, None],
-    #     2600: [2.24, 1.33e-3, None]}
-
-    # trk_2000A_21.rlc_s = {
-    #     1700: [1.59, 1.34e-3, None],
-    #     2000: [1.72, 1.33e-3, None],
-    #     2300: [1.86, 1.32e-3, None],
-    #     2600: [2.00, 1.31e-3, None]}
-
-    # trk_2000A_21.rlc_s = {
-    #     1700: [1.80, 1.18e-3, None],
-    #     2000: [1.98, 1.17e-3, None],
-    #     2300: [2.16, 1.16e-3, None],
-    #     2600: [2.33, 1.15e-3, None]}
 
     para['Trk_z'].rlc_s = trk_2000A_21.rlc_s
 
@@ -209,13 +179,13 @@ def main_cal(path1, path2, path3):
     temp_temp = 0
     cv1, cv2, cv3, cv4, cv5, cv6 = [0] * 6
 
-    pd_read_flag = True
-    # pd_read_flag = False
+    # pd_read_flag = True
+    pd_read_flag = False
 
     # num_len = 1
 
-    for temp_temp in range(num_len):
-    # for cv1, cv2, cv3, cv4, cv5, cv6 in clist:
+    # for temp_temp in range(num_len):
+    for cv1, cv2, cv3, cv4, cv5, cv6 in clist:
 
 
         #################################################################################
@@ -254,16 +224,16 @@ def main_cal(path1, path2, path3):
         # row_data.config_remarks('主分路被调整', pd_read_flag=False)
         row_data.config_remarks('无', pd_read_flag=flag)
 
-        row_data.config_sec_name('235G', 'XWG', pd_read_flag=flag)
+        row_data.config_sec_name('', '', pd_read_flag=flag)
 
-        row_data.config_sec_length(1342, 665, pd_read_flag=flag)
-        # row_data.config_offset(0, pd_read_flag=False)
-        row_data.config_offset(0, pd_read_flag=True)
+        row_data.config_sec_length(700, 700, pd_read_flag=flag)
+        row_data.config_offset(-700, pd_read_flag=False)
+        # row_data.config_offset(0, pd_read_flag=True)
 
-        row_data.config_mutual_coeff(24, pd_read_flag=flag)
+        row_data.config_mutual_coeff(30, pd_read_flag=flag)
         row_data.config_freq(2300, 2300, pd_read_flag=flag)
         # row_data.config_freq(cv1, cv2, pd_read_flag=flag)
-        row_data.config_c_num(7, 7, pd_read_flag=flag)
+        row_data.config_c_num('auto', 'auto', pd_read_flag=flag)
         row_data.config_c_posi(None, None, pd_read_flag=False)
         # if temp_temp == 4:
         #     row_data.config_c_posi(None, [514/2], pd_read_flag=False)
@@ -288,13 +258,13 @@ def main_cal(path1, path2, path3):
         row_data.config_trk_z(pd_read_flag=False, respectively=False)
 
         # TB模式
-        # row_data.config_TB_mode('无TB', pd_read_flag=False)
-        row_data.config_TB_mode('双端TB', pd_read_flag=flag)
+        row_data.config_TB_mode('无TB', pd_read_flag=False)
+        # row_data.config_TB_mode('双端TB', pd_read_flag=flag)
         # row_data.config_TB_mode('双端TB', pd_read_flag=False)
 
-        # row_data.config_sr_mode('右发', '右发', pd_read_flag=False)
+        row_data.config_sr_mode('右发', '右发', pd_read_flag=False)
         # row_data.config_sr_mode('右发', '左发', pd_read_flag=False)
-        row_data.config_sr_mode('', '', pd_read_flag=True)
+        # row_data.config_sr_mode('', '', pd_read_flag=True)
 
         row_data.config_pop([], [], pd_read_flag=False)
         # if temp_temp == 1:
@@ -305,15 +275,15 @@ def main_cal(path1, path2, path3):
         row_data.config_cable_para()
         row_data.config_cable_length(10, 10, pd_read_flag=flag, respectively=True)
         # row_data.config_r_sht(1e-7, 1e-7, pd_read_flag=flag, respectively=True)
-        row_data.config_r_sht(1e-7, 1e-7, pd_read_flag=False, respectively=True)
-        row_data.config_power(5, '最大', pd_read_flag=flag)
+        row_data.config_r_sht(0.01, 0.01, pd_read_flag=False, respectively=True)
+        row_data.config_power(3, '最大', pd_read_flag=flag)
 
         row_data.config_sp_posi()
         row_data.config_train_signal()
         row_data.config_error()
 
         # interval = row_data.config_interval(1, pd_read_flag=flag)
-        interval = row_data.config_interval(1, pd_read_flag=False)
+        interval = row_data.config_interval(2, pd_read_flag=False)
 
         if data['被串故障模式'] is None:
             print(para['freq_被'], para['被串故障模式'])
@@ -425,27 +395,32 @@ def main_cal(path1, path2, path3):
         # md = PreModel_25Hz_coding(parameter=para)
         # md = PreModel_QJ_25Hz_coding(parameter=para)
         # md = PreModel_20200730(parameter=para)
-        md = PreModel_V001(parameter=para)
+        # md = PreModel_V001(parameter=para)
+        md = PreModel_QJ_20201204(parameter=para)
 
         md.add_train()
         # md.add_train_bei()
 
         # posi_list = np.arange(data['被串区段长度(m)']*3 + 14.5, -14.50001, -interval)
 
-        flag_l = data['被串左端里程标']
-        flag_r = data['被串左端里程标'] + data['被串区段长度(m)']
+        # flag_l = data['被串左端里程标']
+        # flag_r = data['被串左端里程标'] + data['被串区段长度(m)']
+
+        flag_l = data['被串左端里程标'] - 14.5
+        flag_r = data['被串左端里程标'] + data['被串区段长度(m)'] * 3 + 14.5
+        posi_list = np.arange(flag_l, flag_r + 0.0001, +interval)
 
         # if data['被串方向'] == '正向':
         #     posi_list = np.arange(flag_r, flag_l - 0.0001, -interval)
         # else:
         #     posi_list = np.arange(flag_l, flag_r + 0.0001, +interval)
 
-        if data['被串方向'] == '右发':
-            posi_list = np.arange(flag_r, flag_l - 0.0001, -interval)
-        elif data['被串方向'] == '左发':
-            posi_list = np.arange(flag_l, flag_r + 0.0001, +interval)
-        else:
-            raise KeyboardInterrupt("被串方向应填写'左发'或'右发'")
+        # if data['被串方向'] == '右发':
+        #     posi_list = np.arange(flag_r, flag_l - 0.0001, -interval)
+        # elif data['被串方向'] == '左发':
+        #     posi_list = np.arange(flag_l, flag_r + 0.0001, +interval)
+        # else:
+        #     raise KeyboardInterrupt("被串方向应填写'左发'或'右发'")
 
         # if data['被串方向'] == '正向':
         #     posi_list = np.arange((data['被串左端里程标'] + data['被串区段长度(m)'])+14.5,
@@ -561,22 +536,22 @@ def main_cal(path1, path2, path3):
         data['被串最大干扰位置(m)'] = round(i_trk_list.index(max(i_trk_list))*interval)
         max_i = data['被串最大干扰电流(A)'] * 1000
         MAX_I = para['MAX_CURRENT'][data['主串频率(Hz)']]
-        if max_i > MAX_I:
-            text = '干扰频率：' + str(data['主串频率(Hz)']) + 'Hz，'\
-                   + '干扰电流上限' + str(MAX_I) + 'mA；第' \
-                   + str(counter) \
-                   + '行数据干扰电流超上限：最大干扰电流为' \
-                   + str(round(max_i, 1)) \
-                   + 'mA，位于距离被串发送端' \
-                   + str(round(data['被串最大干扰位置(m)'], 0)) \
-                   + 'm处'
-            for key in head_list:
-                data[key] = None
-
-            data2excel.refresh_row()
-
-            # data['备注'] = text
-            raise KeyboardInterrupt(text)
+        # if max_i > MAX_I:
+        #     text = '干扰频率：' + str(data['主串频率(Hz)']) + 'Hz，'\
+        #            + '干扰电流上限' + str(MAX_I) + 'mA；第' \
+        #            + str(counter) \
+        #            + '行数据干扰电流超上限：最大干扰电流为' \
+        #            + str(round(max_i, 1)) \
+        #            + 'mA，位于距离被串发送端' \
+        #            + str(round(data['被串最大干扰位置(m)'], 0)) \
+        #            + 'm处'
+        #     for key in head_list:
+        #         data[key] = None
+        #
+        #     data2excel.refresh_row()
+        #
+        #     # data['备注'] = text
+        #     raise KeyboardInterrupt(text)
 
         # v_rcv_bei_list = data2excel.data_dict["被串轨入电压"][-1]
         # data['被串最大轨入电压(主被串同时分路状态)'] = max(v_rcv_bei_list)
