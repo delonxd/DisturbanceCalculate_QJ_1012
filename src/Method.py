@@ -341,9 +341,95 @@ def check_input(df):
             raise KeyboardInterrupt("'TB模式'应填写标准格式")
 
 
+def get_section_length():
+
+    import itertools
+    param = list()
+    zhu_list = range(50, 601, 50)
+
+    for offset in range(50, 301, 50):
+        for len1 in zhu_list:
+            l_list = [-offset, offset]
+            r_list = [len1 - offset, len1 + offset]
+
+            for l_pos, r_pos in itertools.product(l_list, r_list):
+
+                tmp = Param20201307(
+                    len_zhu=len1,
+                    l_pos=l_pos,
+                    r_pos=r_pos,
+                )
+                if tmp.flg is True:
+                    param.append(tmp)
+                    print(tmp.lens_zhu, tmp.lens_bei, tmp.offset, tmp.index_bei)
+    return param
+
+
+class LengthParam:
+    def __init__(self):
+        self.zhu_length = list()
+        self.bei_length = list()
+        self.offset = 0
+
+
+class Param20201307:
+
+    def __init__(self, len_zhu, l_pos, r_pos):
+        offset = abs(l_pos)
+        self.flg = True
+        self.l_pos = l_pos
+        self.r_pos = r_pos
+
+        self.lens_zhu = [len_zhu]
+
+        tmp = r_pos - l_pos
+        self.lens_bei = [len_zhu, tmp, len_zhu]
+
+        # print(self.lens_bei)
+        self.offset = None
+        self.index_bei = None
+
+        if abs(r_pos) < offset:
+            self.flg = False
+
+        if abs(len_zhu - l_pos) < offset:
+            self.flg = False
+
+        if r_pos <= l_pos:
+            self.flg = False
+
+        if r_pos - l_pos > 600:
+            self.flg = False
+
+        if l_pos < 0:
+            self.offset = l_pos
+            self.lens_bei.pop(0)
+            self.index_bei = 0
+
+            if r_pos >= len_zhu:
+                self.lens_bei.pop(-1)
+
+        elif l_pos > 0:
+            self.offset = l_pos - len_zhu
+            self.index_bei = 1
+
+            if r_pos >= len_zhu:
+                self.lens_bei.pop(-1)
+
+
+def parallel(z1, z2):
+    return (z1 * z2) / (z1 + z2)
+
+
+def cal_zl(zpt, zin):
+    zj = (0.037931222832602786+0.3334597710765984j)
+    zca = (0.006459333+0.030996667j)
+    z1 = (zpt * zin) / (zpt + zin) + zca
+    return (z1 * zj) / (z1 + zj)
+
+
 if __name__ == '__main__':
     # m_lens = [700, 700, 700]
     # m_frqs = generate_frqs(Freq(2600), 3)
     # c_nums = get_c_nums(m_frqs, m_lens)
-    a = [1,2,3]
     pass
