@@ -68,6 +68,10 @@ class Section_ZPW2000A(Section):
         # posi_mid1 = c_pst.pop(1)
 
         self.config_c(c_pst)
+        #
+        # pst1 = list(np.linspace(offset, (m_len + offset), c_num + 1))
+        # pst1 = pst1[1:-1]
+        # self.config_c(pst1)
 
         # for num in range(len(c_pst)):
         #     c_name = 'TBC' + str(num + 1)
@@ -185,6 +189,7 @@ class Section_ZPW2000A(Section):
             elif j_typs[num] == '机械':
                 j_clss[num] = Joint_Mechanical
                 tcsr_clss[num] = ZPW2000A_ZN_PTSVA1
+                # tcsr_clss[num] = ZPW2000A_Optimize_Test
             else:
                 raise KeyboardInterrupt("绝缘节类型异常：必须为'电气'或'机械'")
         return j_clss, tcsr_clss
