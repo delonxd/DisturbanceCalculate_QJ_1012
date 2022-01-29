@@ -264,3 +264,13 @@ class TcsrEL25HzCoding(ElePack):
         self.add_child('1短路阻抗', TPortZSeries(self, '1短路阻抗', zs))
         self.add_child('2开路阻抗', TPortZParallel(self, '2开路阻抗', zm))
         self.add_child('3变压器', TPortCircuitN(self, '3变压器', n))
+
+
+# 电码化扼流变压器
+class TcsrEL_OP_0809(ElePack):
+    def __init__(self, parent_ins, name_base, zs, zm, n):
+        super().__init__(parent_ins, name_base)
+        self.flag_ele_list = True
+        self.add_child('1短路阻抗', TPortZSeries(self, '1短路阻抗', zs))
+        self.add_child('2开路阻抗', TPortZParallel(self, '2开路阻抗', zm))
+        self.add_child('3变压器', TPortCircuitN(self, '3变压器', n))

@@ -188,8 +188,9 @@ class Section_ZPW2000A(Section):
                 tcsr_clss[num] = ZPW2000A_QJ_Normal
             elif j_typs[num] == '机械':
                 j_clss[num] = Joint_Mechanical
-                tcsr_clss[num] = ZPW2000A_ZN_PTSVA1
+                # tcsr_clss[num] = ZPW2000A_ZN_PTSVA1
                 # tcsr_clss[num] = ZPW2000A_Optimize_Test
+                tcsr_clss[num] = ZPW2000A_Optimize_0809
             else:
                 raise KeyboardInterrupt("绝缘节类型异常：必须为'电气'或'机械'")
         return j_clss, tcsr_clss

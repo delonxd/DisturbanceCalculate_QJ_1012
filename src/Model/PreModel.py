@@ -249,12 +249,19 @@ class PreModel:
                 if isinstance(ele, ZPW2000A_ZN_PTSVA1):
                     ele_cab = ele['3Cab']
                     ele_cab.length = para['主串电缆长度']
+                elif isinstance(ele, ZPW2000A_Optimize_0809):
+                    ele_cab = ele['3Cab']
+                    ele_cab.length = para['主串电缆长度']
+
 
         if para['被串电缆长度'] is not None:
             for ele in self.section_group4['区段1'].element.values():
                 if isinstance(ele, ZPW2000A_ZN_PTSVA1):
                     ele_cab = ele['3Cab']
                     ele_cab.length = para['被串电缆长度']
+                elif isinstance(ele, ZPW2000A_Optimize_0809):
+                    ele_cab = ele['3Cab']
+                    ele_cab.length = para['主串电缆长度']
 
 
     def change_r_shunt(self):
@@ -1040,15 +1047,16 @@ class PreModel_V001(PreModel):
         self.section_group4 = sg4
 
         self.change_c_value()
-        # self.pop_c()
+        self.pop_c()
 
+        self.change_cable_length()
 
         self.l3 = l3 = Line(name_base='线路3', sec_group=sg3,
                             parameter=parameter)
         self.l4 = l4 = Line(name_base='线路4', sec_group=sg4,
                             parameter=parameter)
-        self.set_rail_para(line=l3,z_trk=para['Trk_z'], rd=para['Trk_z'])
-        self.set_rail_para(line=l4,z_trk=para['Trk_z'], rd=para['Trk_z'])
+        self.set_rail_para(line=l3, z_trk=para['Trk_z'], rd=para['Trk_z'])
+        self.set_rail_para(line=l4, z_trk=para['Trk_z'], rd=para['Trk_z'])
 
         self.lg = LineGroup(l3, l4, name_base='线路组')
 
@@ -1065,6 +1073,33 @@ class PreModel_V001(PreModel):
         for ele in self.section_group4['区段1'].element.values():
             if isinstance(ele, CapC):
                 ele.z = para['Ccmp_z_change_chuan']
+
+    def change_cable_length(self):
+        para = self.parameter
+
+        if para['主串电缆长度'] is not None:
+            for ele in self.section_group3['区段1'].element.values():
+                if isinstance(ele, ZPW2000A_Optimize_0809):
+                    ele_cab = ele['3Cab']
+                    ele_cab.length = para['主串电缆长度']
+        if para['被串电缆长度'] is not None:
+            for ele in self.section_group4['区段1'].element.values():
+                if isinstance(ele, ZPW2000A_Optimize_0809):
+                    ele_cab = ele['3Cab']
+                    ele_cab.length = para['主串电缆长度']
+
+    def pop_c(self):
+        para = self.parameter
+        name_list = self.section_group3['区段1'].get_C_TB_names()
+
+        for temp in para['主串拆卸情况']:
+            str_temp = name_list[temp-1][1]
+            self.section_group3['区段1'].element.pop(str_temp)
+
+        name_list = self.section_group4['区段1'].get_C_TB_names()
+        for temp in para['被串拆卸情况']:
+            str_temp = name_list[temp-1][1]
+            self.section_group4['区段1'].element.pop(str_temp)
 
 
 class PreModel_QJ_20201204(PreModel):
@@ -1081,7 +1116,12 @@ class PreModel_QJ_20201204(PreModel):
         m_frqs = generate_frqs(Freq(para['freq_主']), 1)
         m_lens = [para['主串区段长度']]*1
         c_nums = get_c_nums(m_frqs, m_lens)
-        sg3 = SectionGroup(name_base='地面', posi=para['offset_zhu'], m_num=1,
+        # c_nums = para['主串电容数']
+
+        print(m_lens)
+        print(c_nums)
+
+        sg3 = SectionGroup(name_base='地面', posi=0, m_num=1,
                            m_frqs=m_frqs,
                            m_lens=m_lens,
                            j_lens=[29, 29],
@@ -1097,10 +1137,30 @@ class PreModel_QJ_20201204(PreModel):
         elif para['sr_mod_主'] == '右发':
             sg3['区段1']['右调谐单元'].set_power_voltage(flg)
 
-        m_frqs = generate_frqs(Freq(para['freq_被']), 3)
-        m_lens = [para['被串区段长度']]*3
+        # param = para['param']
+        #
+        # m_frqs = generate_frqs(Freq(para['freq_被']), 3, flip_flag=True)
+        #
+        # if param.index_bei == 0:
+        #     m_frqs.pop(0)
+        #
+        # # m_lens = param.lens_bei
+        #
+        # m_num = len(m_lens)
+        #
+        # m_frqs = m_frqs[0:m_num]
+        #
+        # c_nums = get_c_nums(m_frqs, m_lens)
+        # print(c_nums, m_frqs)
+
+        # 轨道电路初始化
+        send_level = para['send_level']
+        m_frqs = generate_frqs(Freq(para['freq_被']), 2)
+        m_lens = [para['被串区段长度']] * 2
+
         c_nums = get_c_nums(m_frqs, m_lens)
-        sg4 = SectionGroup(name_base='地面', posi=para['offset_bei'], m_num=3,
+        # c_nums = para['被串电容数']
+        sg4 = SectionGroup(name_base='地面', posi=para['offset_bei'], m_num=2,
                            m_frqs=m_frqs,
                            m_lens=m_lens,
                            # j_lens=[0, 0],
@@ -1111,7 +1171,6 @@ class PreModel_QJ_20201204(PreModel):
                            sr_mods=[para['sr_mod_被']] * 3,
                            send_lvs=[send_level] * 3,
                            parameter=parameter)
-
 
         # partent = sg3['区段1']
         # ele = JumperWire(parent_ins=partent,
@@ -1127,13 +1186,16 @@ class PreModel_QJ_20201204(PreModel):
         self.change_c_value()
         # self.pop_c()
 
-
         self.l3 = l3 = Line(name_base='线路3', sec_group=sg3,
                             parameter=parameter)
         self.l4 = l4 = Line(name_base='线路4', sec_group=sg4,
                             parameter=parameter)
-        self.set_rail_para(line=l3,z_trk=para['Trk_z'], rd=para['Trk_z'])
-        self.set_rail_para(line=l4,z_trk=para['Trk_z'], rd=para['Trk_z'])
+
+        # self.set_rail_para(line=l3,z_trk=para['Trk_z'], rd=para['Trk_z'])
+        # self.set_rail_para(line=l4,z_trk=para['Trk_z'], rd=para['Trk_z'])
+
+        self.set_rail_para(line=l3, z_trk=para['主串钢轨阻抗'], rd=para['主串道床电阻'])
+        self.set_rail_para(line=l4, z_trk=para['被串钢轨阻抗'], rd=para['被串道床电阻'])
 
         self.lg = LineGroup(l3, l4, name_base='线路组')
 
@@ -1150,3 +1212,152 @@ class PreModel_QJ_20201204(PreModel):
         for ele in self.section_group4['区段1'].element.values():
             if isinstance(ele, CapC):
                 ele.z = para['Ccmp_z_change_chuan']
+
+        v1 = 46 * 1e-6
+        tmp = para['Ccmp_z_change_chuan'].copy()
+        tmp.rlc_s = {
+            1700: [10e-3, None, v1],
+            2000: [10e-3, None, v1],
+            2300: [10e-3, None, v1],
+            2600: [10e-3, None, v1]}
+
+        for ele in self.section_group4['区段2'].element.values():
+            if isinstance(ele, CapC):
+                ele.z = tmp
+
+
+class PreModel_225Hz_coding(PreModel):
+    def __init__(self, parameter):
+        # super().__init__(turnout_list, parameter)
+        self.parameter = para = parameter
+        self.train1 = Train(name_base='列车1', posi=0, parameter=parameter)
+        self.train2 = Train(name_base='列车2', posi=0, parameter=parameter)
+        # self.train1['分路电阻1'].z = 1000000
+        # self.train2['分路电阻1'].z = 1000000
+
+        # 轨道电路初始化
+        send_level = para['send_level']
+        m_frqs = generate_frqs(Freq(para['freq_主']), 1)
+        m_lens = [para['主串区段长度']]*1
+        c_nums = get_c_nums(m_frqs, m_lens)
+        # c_nums = para['主串电容数']
+        sg3 = SectionGroup(name_base='地面', posi=0, m_num=1,
+                           m_frqs=m_frqs,
+                           m_lens=m_lens,
+                           j_lens=[29, 29],
+                           m_typs=['2000A'],
+                           c_nums=c_nums,
+                           sr_mods=[para['sr_mod_主']],
+                           send_lvs=[send_level],
+                           parameter=parameter)
+
+        flg = para['pwr_v_flg']
+        if para['sr_mod_主'] == '左发':
+            sg3['区段1']['左调谐单元'].set_power_voltage(flg)
+        elif para['sr_mod_主'] == '右发':
+            sg3['区段1']['右调谐单元'].set_power_voltage(flg)
+
+        # param = para['param']
+        #
+        # m_frqs = generate_frqs(Freq(para['freq_被']), 3, flip_flag=True)
+        #
+        # if param.index_bei == 0:
+        #     m_frqs.pop(0)
+        #
+        # # m_lens = param.lens_bei
+        #
+        # m_num = len(m_lens)
+        #
+        # m_frqs = m_frqs[0:m_num]
+        #
+        # c_nums = get_c_nums(m_frqs, m_lens)
+        # print(c_nums, m_frqs)
+
+        # # 轨道电路初始化
+        # send_level = para['send_level']
+        # m_frqs = generate_frqs(Freq(para['freq_被']), 1)
+        # m_lens = [para['被串区段长度']]*1
+        # # c_nums = get_c_nums(m_frqs, m_lens)
+        # c_nums = para['被串电容数']
+        # sg4 = SectionGroup(name_base='地面', posi=para['offset_bei'], m_num=1,
+        #                    m_frqs=m_frqs,
+        #                    m_lens=m_lens,
+        #                    # j_lens=[0, 0],
+        #                    # m_typs=['2000A_25Hz_Coding'],
+        #                    j_lens=[29] * 4,
+        #                    m_typs=['2000A'] * 3,
+        #                    c_nums=c_nums,
+        #                    sr_mods=[para['sr_mod_被']] * 3,
+        #                    send_lvs=[send_level] * 3,
+        #                    parameter=parameter)
+
+
+        # partent = sg3['区段1']
+        # ele = JumperWire(parent_ins=partent,
+        #                  name_base='跳线',
+        #                  posi=para['主串区段长度'])
+        # partent.add_child('跳线', ele)
+        # ele.set_posi_abs(0)
+        # self.jumper = ele
+
+        self.section_group3 = sg3
+        # self.section_group4 = sg4
+
+        self.change_c_value()
+        # self.pop_c()
+
+
+        self.l3 = l3 = Line(name_base='线路3', sec_group=sg3,
+                            parameter=parameter)
+        # self.l4 = l4 = Line(name_base='线路4', sec_group=sg4,
+        #                     parameter=parameter)
+        self.set_rail_para(line=l3,z_trk=para['主串钢轨阻抗'], rd=para['主串道床电阻'])
+        # self.set_rail_para(line=l3, z_trk=para['Trk_z'], rd=para['Trk_z'])
+        # self.set_rail_para(line=l4, z_trk=para['Trk_z'], rd=para['Trk_z'])
+
+        # self.lg = LineGroup(l3, l4, name_base='线路组')
+        self.lg = LineGroup(l3, name_base='线路组')
+
+        self.lg.special_point = para['special_point']
+        self.lg.refresh()
+
+    def change_c_value(self):
+        para = self.parameter
+
+        for ele in self.section_group3['区段1'].element.values():
+            if isinstance(ele, CapC):
+                ele.z = para['Ccmp_z_change_zhu']
+
+        # for ele in self.section_group4['区段1'].element.values():
+        #     if isinstance(ele, CapC):
+        #         ele.z = para['Ccmp_z_change_chuan']
+
+        v1 = 46 * 1e-6
+        tmp = para['Ccmp_z_change_chuan'].copy()
+        tmp.rlc_s = {
+            1700: [10e-3, None, v1],
+            2000: [10e-3, None, v1],
+            2300: [10e-3, None, v1],
+            2600: [10e-3, None, v1]}
+
+        # for ele in self.section_group4['区段2'].element.values():
+        #     if isinstance(ele, CapC):
+        #         ele.z = tmp
+
+    def add_train(self):
+        para = self.parameter
+        l3 = Line(name_base='线路3', sec_group=self.section_group3,
+                  parameter=self.parameter, train=[self.train2])
+        self.l3 = l3
+
+        # l4 = Line(name_base='线路4', sec_group=self.section_group4,
+        #           parameter=self.parameter, train=[self.train1])
+        # self.l4 = l4
+
+        self.set_rail_para(line=l3, z_trk=para['主串钢轨阻抗'], rd=para['主串道床电阻'])
+        # self.set_rail_para(line=l4,z_trk=para['被串钢轨阻抗'], rd=para['被串道床电阻'])
+
+        # self.lg = LineGroup(self.l3, self.l4, name_base='线路组')
+        self.lg = LineGroup(self.l3, name_base='线路组')
+        self.lg.special_point = self.parameter['special_point']
+        self.lg.refresh()

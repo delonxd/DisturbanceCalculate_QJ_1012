@@ -46,7 +46,12 @@ class SubRailPi(TwoPortNetwork):
 
     def get_coeffs(self, freq):
         z_trk = self.z_trk
-        rd = float(self.rd)
+        try:
+            rd = float(self.rd)
+        except:
+            print(type(self.rd), '-->', self.rd)
+            raise KeyboardInterrupt
+
         length = self.track_length / 1000
         z0 = z_trk[freq].z
         y0 = 1 / rd

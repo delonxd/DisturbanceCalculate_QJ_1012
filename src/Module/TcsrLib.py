@@ -24,6 +24,13 @@ class ZPW2000A_QJ_Normal(TCSR):
                                      para['FL_z1_发送端'],
                                      para['FL_z2_发送端'],
                                      para['FL_n_发送端']))
+        if self.mode == '发送':
+            # self.add_child('3CabComp', TPortZSeries(self, '3CabComp', para['加感_发送']))
+            self.add_child('3CabComp', TPortZParallel(self, '3CabComp', para['加感_发送']))
+        elif self.mode == '接收':
+            # self.add_child('3CabComp', TPortZSeries(self, '3CabComp', para['加感_接收']))
+            self.add_child('3CabComp', TPortZParallel(self, '3CabComp', para['加感_接收']))
+
         self.add_child('3Cab', TPortCable(self, '3Cab', cable_length,
                                           para['Cable_R'],
                                           para['Cable_L'],
@@ -80,6 +87,73 @@ class ZPW2000A_ZN_PTSVA1(TCSR):
         self.add_child('5PT_CA', TPortZSeries(self, '5PT_CA', para['标准短路阻抗']))
         self.add_child('6SVA1', TPortZParallel(self, '6SVA1', para['SVA1_z']))
         self.add_child('7CA', TcsrCA(self, '7CA', para['CA_z_区间']))
+
+        self.md_list = self.get_md_list([])
+        self.config_varb()
+
+
+# ZPW2000A站内PT+SVA'配置
+class ZPW2000A_Optimize_Test(TCSR):
+    def __init__(self, parent_ins, name_base,
+                 posi_flag, cable_length, mode, level):
+        super().__init__(parent_ins, name_base, posi_flag)
+        self.parameter = para = parent_ins.parameter
+        self.posi_flag = posi_flag
+        self.init_position(0)
+        self.flag_ele_list = True
+        self.flag_ele_unit = True
+        self.mode = mode
+        self.send_level = level
+        self.u_list_max = [183, 164, 142, 115, 81.5, 68, 60.5, 48.6, 40.8]
+        self.u_list_min = [167, 150, 130, 105, 74.5, 61, 55, 44, 37]
+
+        if self.mode == '发送':
+            self.add_child('1发送器', TcsrPower(self, '1发送器', para['z_pwr']))
+            self.add_child('2防雷', TcsrFL(self, '2防雷',
+                                         para['FL_z1_发送端'],
+                                         para['FL_z2_发送端'],
+                                         para['FL_n_发送端']))
+            self.add_child('3Cab', TPortCable(self, '3Cab', cable_length,
+                                              para['Cable_R'],
+                                              para['Cable_L'],
+                                              para['Cable_C']))
+
+            self.add_child('4TAD', TcsrTAD(self, '4TAD',
+                                           para['TAD_z1_发送端_区间'],
+                                           para['TAD_z2_发送端_区间'],
+                                           para['TAD_z3_发送端_区间'],
+                                           para['TAD_n_发送端_区间'],
+                                           para['TAD_c_发送端_站内']))
+            self.add_child('5BA', TcsrBA(self, '5BA', para['PT']))
+
+            self.add_child('6CA', TcsrCA(self, '6CA', para['CA_z_区间']))
+            # self.add_child('7JZ', TPortZParallel(self, '7JZ', para['Joint_z']))
+            self.add_child('7JZ', TPortZParallel(self, '7JZ', para['SVA1_z']))
+
+        elif self.mode == '接收':
+            # self.add_child('1接收器', TcsrReceiver(self, '1接收器', para['Z_rcv']))
+            self.add_child('1接收端阻抗', TcsrReceiver(self, '1接收端阻抗', para['Zl_rcv']))
+        self.add_child('2并联阻抗', TPortZParallel(self, '2并联阻抗', para['zc_half']))
+        # self.add_child('2防雷', TcsrFL(self, '2防雷',
+        #                              para['FL_z1_发送端'],
+        #                              para['FL_z2_发送端'],
+        #                              para['FL_n_发送端']))
+        # self.add_child('3Cab', TPortCable(self, '3Cab', cable_length,
+        #                                   para['Cable_R'],
+        #                                   para['Cable_L'],
+        #                                   para['Cable_C']))
+        #
+        # self.add_child('4TAD', TcsrTAD(self, '4TAD',
+        #                                para['TAD_z1_发送端_区间'],
+        #                                para['TAD_z2_发送端_区间'],
+        #                                para['TAD_z3_发送端_区间'],
+        #                                para['TAD_n_发送端_区间'],
+        #                                para['TAD_c_发送端_站内']))
+        # self.add_child('5BA', TcsrBA(self, '5BA', para['PT']))
+        #
+        # self.add_child('6CA', TcsrCA(self, '6CA', para['CA_z_区间']))
+        # # self.add_child('7JZ', TPortZParallel(self, '7JZ', para['Joint_z']))
+        # self.add_child('7JZ', TPortZParallel(self, '7JZ', para['SVA1_z']))
 
         self.md_list = self.get_md_list([])
         self.config_varb()
@@ -258,7 +332,6 @@ class ZPW2000A_ZN_BPLN(TCSR):
         self.config_varb()
 
 
-
 # ZPW2000A站内25Hz叠加电码化
 class ZPW2000A_ZN_25Hz_Coding(TCSR):
     # def __init__(self, parent_ins, name_base, posi_flag):
@@ -327,7 +400,6 @@ class ZPW2000A_ZN_25Hz_Coding(TCSR):
             zm=para['zm_EL_25Hz_Coding'],
             n=para['n_EL_25Hz_Coding']))
 
-
         # self.add_child('3FT1u电阻', TPortZSeries(self, '3FT1u阻抗', para['z_FT1u']))
         # self.add_child('4FT1u开路电阻', TPortZSeries(self, '3FT1u阻抗', para['z_FT1u']))
         # self.add_child('5FT1u变压器', TPortCircuitN(self, '4FT1u变压器', para['n_FT1u']))
@@ -338,6 +410,41 @@ class ZPW2000A_ZN_25Hz_Coding(TCSR):
         # self.add_child('7扼流变压器', TPortCircuitN(self, '7扼流变压器', para['n_EL_25Hz']))
         # self.add_child('8扼流阻抗', TPortZParallel(self, '8扼流阻抗', para['z_EL_25Hz']))
 
+        self.md_list = self.get_md_list([])
+        self.config_varb()
+
+
+# ZPW2000A站内PT+SVA'配置
+class ZPW2000A_Optimize_0809(TCSR):
+    def __init__(self, parent_ins, name_base,
+                 posi_flag, cable_length, mode, level):
+        super().__init__(parent_ins, name_base, posi_flag)
+        self.parameter = para = parent_ins.parameter
+        self.posi_flag = posi_flag
+        self.init_position(0)
+        self.flag_ele_list = True
+        self.flag_ele_unit = True
+        self.mode = mode
+        self.send_level = level
+        self.u_list_max = [183, 164, 142, 115, 81.5, 68, 60.5, 48.6, 40.8]
+        self.u_list_min = [167, 150, 130, 105, 74.5, 61, 55, 44, 37]
+
+        if self.mode == '发送':
+            self.add_child('1发送器', TcsrPower(self, '1发送器', para['z_pwr']))
+        elif self.mode == '接收':
+            self.add_child('1接收器', TcsrReceiver(self, '1接收器', para['Z_rcv']))
+
+        self.add_child('3Cab', TPortCable(self, '3Cab', cable_length,
+                                          para['Cable_R'],
+                                          para['Cable_L'],
+                                          para['Cable_C']))
+
+        self.add_child('4EL_Op_0809', TcsrEL_OP_0809(self, '4EL_Op_0809',
+                                       para['Op_0809_z1'],
+                                       para['Op_0809_z2'],
+                                       para['Op_0809_n']))
+
+        self.add_child('7CA', TcsrCA(self, '7CA', para['CA_z_区间']))
 
         self.md_list = self.get_md_list([])
         self.config_varb()
