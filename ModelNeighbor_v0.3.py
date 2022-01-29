@@ -2,12 +2,31 @@ from MainCalculate import *
 import time
 import os
 
+
 def main(path1, path2, path3):
     try:
         main_cal(path1, path2, path3)
         print('finished')
         return 1
     except BaseException as reason:
+        print(reason)
+        return reason
+
+
+def main(path1, path2, path3):
+    try:
+        main_cal(path1, path2, path3)
+        print('unfinished')
+        return 1
+    except BlockingIOError as reason:
+        print(reason)
+        return reason
+
+    except BaseException as reason:
+        for ele in range(path1):
+            path1 += 1
+            show_ele(vessel=path1)
+
         print(reason)
         return reason
 

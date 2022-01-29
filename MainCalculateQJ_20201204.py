@@ -74,6 +74,12 @@ def main_cal(path1, path2, path3):
         2300: (11.88 + 39.0j)*1e-3,
         2600: (13.60 + 42.6j)*1e-3}
 
+    # para['Z_rcv'].rlc_p = {
+    #     1700: (23e3, 13.370340e-3, None),
+    #     2000: (23e3, 13.366127e-3, None),
+    #     2300: (23e3, 13.363013e-3, None),
+    #     2600: (23e3, 13.366739e-3, None)}
+
     # z_tb_2600_2000 = para['TB'][2600][2000].z
 
     #################################################################################
@@ -168,6 +174,16 @@ def main_cal(path1, path2, path3):
 
     clist1 = clist2 = clist3 = clist4 = clist5 = clist6 = [[]]
 
+    clist1 = [
+        [1700, 1700], [1700, 2300], [2300, 2300], [2300, 1700],
+        [2000, 2000], [2000, 2600], [2600, 2600], [2600, 2000],
+    ]
+    # clist1 = [[2600, 2000]]
+
+    clist2 = get_section_length()
+
+    print('总行数：%s' % str(len(clist2)))
+
     clist = list(itertools.product(
         clist1, clist2, clist3, clist4, clist5, clist6))
 
@@ -185,9 +201,12 @@ def main_cal(path1, path2, path3):
     # num_len = 1
 
     # for temp_temp in range(num_len):
-    for cv1, cv2, cv3, cv4, cv5, cv6 in clist:
+    # for cv1, cv2, cv3, cv4, cv5, cv6 in clist:
+    for _ in range(1):
 
-
+        print()
+        # print(cv2.lens_zhu, cv2.lens_bei, cv2.offset, cv2.l_pos, cv2.index_bei)
+        # print('offset:%s, l_pos:%s, r_pos:%s' % (cv2.offset, cv2.l_pos, cv2.r_pos))
         #################################################################################
 
         # # 封装程序显示
@@ -212,6 +231,8 @@ def main_cal(path1, path2, path3):
         df_input_row = df_input.iloc[temp_temp]
         row_data = RowData(df_input_row, para, data, pd_read_flag)
 
+        # para['param'] = cv2
+
         #################################################################################
 
         # 载入数据
@@ -226,20 +247,25 @@ def main_cal(path1, path2, path3):
 
         row_data.config_sec_name('', '', pd_read_flag=flag)
 
-        row_data.config_sec_length(700, 700, pd_read_flag=flag)
-        row_data.config_offset(-700, pd_read_flag=False)
+        # row_data.config_sec_length(cv2.lens_zhu[0], cv2.lens_bei[cv2.index_bei], pd_read_flag=flag)
+        row_data.config_sec_length(500, 500, pd_read_flag=flag)
+        row_data.config_offset(0, pd_read_flag=False)
         # row_data.config_offset(0, pd_read_flag=True)
 
-        row_data.config_mutual_coeff(30, pd_read_flag=flag)
-        row_data.config_freq(2300, 2300, pd_read_flag=flag)
+        row_data.config_mutual_coeff(20, pd_read_flag=flag)
+        # row_data.config_freq(cv1[0], cv1[1], pd_read_flag=flag)
+        row_data.config_freq(1700, 1700, pd_read_flag=flag)
         # row_data.config_freq(cv1, cv2, pd_read_flag=flag)
-        row_data.config_c_num('auto', 'auto', pd_read_flag=flag)
+        # row_data.config_c_num('auto', 'auto', pd_read_flag=flag)
+        row_data.config_c_num([6], [6], pd_read_flag=flag)
         row_data.config_c_posi(None, None, pd_read_flag=False)
         # if temp_temp == 4:
         #     row_data.config_c_posi(None, [514/2], pd_read_flag=False)
         row_data.config_c2TB(False)
 
+        # row_data.config_c_value(25, 25, pd_read_flag=flag)
         row_data.config_c_value(25, 25, pd_read_flag=flag)
+
         # row_data.config_c_inhibitor(pd_read_flag=flag)
 
         # row_data.config_c_fault_mode('无', cv2, pd_read_flag=flag)
@@ -262,7 +288,7 @@ def main_cal(path1, path2, path3):
         # row_data.config_TB_mode('双端TB', pd_read_flag=flag)
         # row_data.config_TB_mode('双端TB', pd_read_flag=False)
 
-        row_data.config_sr_mode('右发', '右发', pd_read_flag=False)
+        row_data.config_sr_mode('左发', '右发', pd_read_flag=False)
         # row_data.config_sr_mode('右发', '左发', pd_read_flag=False)
         # row_data.config_sr_mode('', '', pd_read_flag=True)
 
@@ -276,14 +302,14 @@ def main_cal(path1, path2, path3):
         row_data.config_cable_length(10, 10, pd_read_flag=flag, respectively=True)
         # row_data.config_r_sht(1e-7, 1e-7, pd_read_flag=flag, respectively=True)
         row_data.config_r_sht(0.01, 0.01, pd_read_flag=False, respectively=True)
-        row_data.config_power(3, '最大', pd_read_flag=flag)
+        row_data.config_power(2, '最大', pd_read_flag=flag)
 
         row_data.config_sp_posi()
         row_data.config_train_signal()
         row_data.config_error()
 
         # interval = row_data.config_interval(1, pd_read_flag=flag)
-        interval = row_data.config_interval(2, pd_read_flag=False)
+        interval = row_data.config_interval(1, pd_read_flag=False)
 
         if data['被串故障模式'] is None:
             print(para['freq_被'], para['被串故障模式'])
@@ -313,8 +339,6 @@ def main_cal(path1, path2, path3):
         # ica = md.lg['线路3']['地面']['区段1']['左调谐单元']['7CA']['I2'].value
         # rca = uca/ica
         # rca1 = abs(uca/ica)
-
-
 
         # name_list = md.section_group3['区段1'].get_C_TB_names()
         # name_list.reverse()
@@ -373,7 +397,6 @@ def main_cal(path1, path2, path3):
         # data['被串TB1电流(A)'] = md.lg['线路4']['地面']['区段1']['TB1']['I'].value_c
         # data['被串TB2电流(A)'] = md.lg['线路4']['地面']['区段1']['TB2']['I'].value_c
 
-
         #################################################################################
 
         # data['调整轨入最大值'] = md.lg['线路3']['地面']['区段1']['左调谐单元']['1接收器']['U'].value_c
@@ -396,7 +419,8 @@ def main_cal(path1, path2, path3):
         # md = PreModel_QJ_25Hz_coding(parameter=para)
         # md = PreModel_20200730(parameter=para)
         # md = PreModel_V001(parameter=para)
-        md = PreModel_QJ_20201204(parameter=para)
+        # md = PreModel_QJ_20201204(parameter=para)
+        md = PreModel_225Hz_coding(parameter=para)
 
         md.add_train()
         # md.add_train_bei()
@@ -406,9 +430,21 @@ def main_cal(path1, path2, path3):
         # flag_l = data['被串左端里程标']
         # flag_r = data['被串左端里程标'] + data['被串区段长度(m)']
 
-        flag_l = data['被串左端里程标'] - 14.5
-        flag_r = data['被串左端里程标'] + data['被串区段长度(m)'] * 3 + 14.5
+        # flag_l = data['被串左端里程标'] - 14.5
+        # flag_r = data['被串左端里程标'] + data['被串区段长度(m)'] * 3 + 14.5
+
+        # flag_l = cv2.l_pos + 14.5
+        # flag_r = cv2.r_pos - 14.5
+        #
+        # posi_list = np.arange(flag_l, flag_r + 0.0001, +interval)
+        # print(len(posi_list))
+
+        flag_l = para['offset_bei'] - 14.5
+        # flag_r = para['被串区段长度'][0] + para['被串区段长度'][1] - para['offset_bei'] + 14.5
+        flag_r = para['被串区段长度'] + para['offset_bei'] + 14.5
+
         posi_list = np.arange(flag_l, flag_r + 0.0001, +interval)
+        print(len(posi_list))
 
         # if data['被串方向'] == '正向':
         #     posi_list = np.arange(flag_r, flag_l - 0.0001, -interval)
@@ -439,6 +475,7 @@ def main_cal(path1, path2, path3):
         len_posi = max(len(posi_list), len_posi)
 
         for posi_bei in posi_list:
+            # print(posi_bei)
             para['分路位置'] = posi_bei
 
             md.train1.posi_rlt = posi_bei
@@ -536,6 +573,8 @@ def main_cal(path1, path2, path3):
         data['被串最大干扰位置(m)'] = round(i_trk_list.index(max(i_trk_list))*interval)
         max_i = data['被串最大干扰电流(A)'] * 1000
         MAX_I = para['MAX_CURRENT'][data['主串频率(Hz)']]
+
+        print('最大干扰电流：%.2f mA' % max_i)
         # if max_i > MAX_I:
         #     text = '干扰频率：' + str(data['主串频率(Hz)']) + 'Hz，'\
         #            + '干扰电流上限' + str(MAX_I) + 'mA；第' \
@@ -574,6 +613,7 @@ def main_cal(path1, path2, path3):
 
     # 修正表头
     # print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+
 
     posi_header = list(range(columns_max))
     # posi_header[0] = '发送端'
