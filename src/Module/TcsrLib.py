@@ -24,12 +24,12 @@ class ZPW2000A_QJ_Normal(TCSR):
                                      para['FL_z1_发送端'],
                                      para['FL_z2_发送端'],
                                      para['FL_n_发送端']))
-        if self.mode == '发送':
-            # self.add_child('3CabComp', TPortZSeries(self, '3CabComp', para['加感_发送']))
-            self.add_child('3CabComp', TPortZParallel(self, '3CabComp', para['加感_发送']))
-        elif self.mode == '接收':
-            # self.add_child('3CabComp', TPortZSeries(self, '3CabComp', para['加感_接收']))
-            self.add_child('3CabComp', TPortZParallel(self, '3CabComp', para['加感_接收']))
+        # if self.mode == '发送':
+        #     # self.add_child('3CabComp', TPortZSeries(self, '3CabComp', para['加感_发送']))
+        #     self.add_child('3CabComp', TPortZParallel(self, '3CabComp', para['加感_发送']))
+        # elif self.mode == '接收':
+        #     # self.add_child('3CabComp', TPortZSeries(self, '3CabComp', para['加感_接收']))
+        #     self.add_child('3CabComp', TPortZParallel(self, '3CabComp', para['加感_接收']))
 
         self.add_child('3Cab', TPortCable(self, '3Cab', cable_length,
                                           para['Cable_R'],

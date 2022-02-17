@@ -332,8 +332,10 @@ class PreModel:
 
     def add_train(self):
         para = self.parameter
+        # l3 = Line(name_base='线路3', sec_group=self.section_group3,
+        #           parameter=self.parameter, train=[self.train2])
         l3 = Line(name_base='线路3', sec_group=self.section_group3,
-                  parameter=self.parameter, train=[self.train2])
+                  parameter=self.parameter)
         self.l3 = l3
 
         l4 = Line(name_base='线路4', sec_group=self.section_group4,
@@ -1113,13 +1115,14 @@ class PreModel_QJ_20201204(PreModel):
 
         # 轨道电路初始化
         send_level = para['send_level']
-        m_frqs = generate_frqs(Freq(para['freq_主']), 1)
-        m_lens = [para['主串区段长度']]*1
-        c_nums = get_c_nums(m_frqs, m_lens)
-        # c_nums = para['主串电容数']
+        # m_frqs = generate_frqs(Freq(para['freq_主']), 1)
 
-        print(m_lens)
-        print(c_nums)
+        m_frqs = [Freq(para['freq_主'])]
+        m_lens = [para['主串区段长度']]
+        # c_nums = get_c_nums(m_frqs, m_lens)
+        c_nums = [para['主串电容数']]
+
+        print(m_frqs)
 
         sg3 = SectionGroup(name_base='地面', posi=0, m_num=1,
                            m_frqs=m_frqs,
@@ -1155,12 +1158,18 @@ class PreModel_QJ_20201204(PreModel):
 
         # 轨道电路初始化
         send_level = para['send_level']
-        m_frqs = generate_frqs(Freq(para['freq_被']), 2)
-        m_lens = [para['被串区段长度']] * 2
+        # m_frqs = generate_frqs(Freq(para['freq_被']), 2)
+        # m_lens = [para['被串区段长度']] * 2
 
-        c_nums = get_c_nums(m_frqs, m_lens)
+        m_frqs = list(map(lambda x: Freq(x), para['freq_被']))
+        m_lens = para['被串区段长度']
+        # c_nums = get_c_nums(m_frqs, m_lens)
+        c_nums = para['被串电容数']
+
+        print(m_frqs)
+
         # c_nums = para['被串电容数']
-        sg4 = SectionGroup(name_base='地面', posi=para['offset_bei'], m_num=2,
+        sg4 = SectionGroup(name_base='地面', posi=para['offset_bei'], m_num=len(m_lens),
                            m_frqs=m_frqs,
                            m_lens=m_lens,
                            # j_lens=[0, 0],
@@ -1183,7 +1192,7 @@ class PreModel_QJ_20201204(PreModel):
         self.section_group3 = sg3
         self.section_group4 = sg4
 
-        self.change_c_value()
+        # self.change_c_value()
         # self.pop_c()
 
         self.l3 = l3 = Line(name_base='线路3', sec_group=sg3,
