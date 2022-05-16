@@ -115,53 +115,66 @@ def main_cal(path1, path2, path3):
 
     BASE = 'D2K11+790 = K558+104'
 
+    # info_line1 = [
+    #     -36,
+    #     ('0132AG', 2000, 475, 8),
+    #     ('0132BG', 2600, 475, 6),
+    #     ('0132CG', 2000, 500, 8),
+    #     ('0148AG', 2600, 400, 5),
+    #     ('0148BG', 2000, 600, 10),
+    #     ('0148CG', 2600, 500, 6),
+    #     ('0162AG', 2000, 551, 10),
+    #     ('0162BG-1', 2600, 551, 7),
+    #     ('0162BG-2', 2000, 400, 6),
+    #     ('0178AG', 2600, 700, 8),
+    # ]
+    #
+    # info_line2 = [
+    #     -294,
+    #     ('NS1LQAG', 2000, 537, 9),
+    #     ('5578CG', 2600, 470, 6),
+    #     ('5578BG', 2000, 625, 10),
+    #     ('5578AG', 2600, 745, 9),
+    #     ('5560CG', 2000, 505, 9),
+    #     ('5560BG', 2600, 625, 8),
+    #     ('5560AG', 2000, 760, 13),
+    #     ('5542CG', 2600, 490, 6),
+    #     ('5542BG', 2000, 560, 10),
+    #     ('5542AG', 2600, 800, 10),
+    # ]
+    #
+    # info_line3 = [
+    #     -615,
+    #     ('S1LQBG', 2600, 464, 6),
+    #     ('S1LQAG', 2000, 464, 8),
+    #     ('8420DG', 2600, 625, 8),
+    #     ('8420CG', 2000, 745, 12),
+    #     ('8420BG', 2600, 505, 7),
+    #     ('8420AG', 2000, 625, 10),
+    #     ('8394CG', 2600, 766, 10),
+    #     ('8394BG', 2000, 490, 8),
+    #     ('8394AG', 2600, 550, 7),
+    #     ('8376CG', 2000, 810, 14),
+    # ]
+
     info_line1 = [
-        -36,
-        ('0132AG', 2000, 475, 8),
-        ('0132BG', 2600, 475, 6),
-        ('0132CG', 2000, 500, 8),
-        ('0148AG', 2600, 400, 5),
-        ('0148BG', 2000, 600, 10),
-        ('0148CG', 2600, 500, 6),
-        ('0162AG', 2000, 551, 10),
-        ('0162BG-1', 2600, 551, 7),
-        ('0162BG-2', 2000, 400, 6),
-        ('0178AG', 2600, 700, 8),
+        0,
+        ('模拟2600Hz区段', 2600, 400, 0),
     ]
 
     info_line2 = [
-        -294,
-        ('NS1LQAG', 2000, 537, 9),
+        0,
         ('5578CG', 2600, 470, 6),
         ('5578BG', 2000, 625, 10),
-        ('5578AG', 2600, 745, 9),
-        ('5560CG', 2000, 505, 9),
-        ('5560BG', 2600, 625, 8),
-        ('5560AG', 2000, 760, 13),
-        ('5542CG', 2600, 490, 6),
-        ('5542BG', 2000, 560, 10),
-        ('5542AG', 2600, 800, 10),
-    ]
-
-    info_line3 = [
-        -615,
-        ('S1LQBG', 2600, 464, 6),
-        ('S1LQAG', 2000, 464, 8),
-        ('8420DG', 2600, 625, 8),
-        ('8420CG', 2000, 745, 12),
-        ('8420BG', 2600, 505, 7),
-        ('8420AG', 2000, 625, 10),
-        ('8394CG', 2600, 766, 10),
-        ('8394BG', 2000, 490, 8),
-        ('8394AG', 2600, 550, 7),
-        ('8376CG', 2000, 810, 14),
     ]
 
     res_list = []
-    res_list.extend(get_line_info(info_line1, info_line2))
-    res_list.extend(get_line_info(info_line2, info_line1))
-    res_list.extend(get_line_info(info_line2, info_line3))
-    res_list.extend(get_line_info(info_line3, info_line2))
+    for offset in range(0, 500, 10):
+        info_line1[0] = offset
+        res_list.extend(get_line_info(info_line1, info_line2))
+        # res_list.extend(get_line_info(info_line2, info_line1))
+    # res_list.extend(get_line_info(info_line2, info_line3))
+    # res_list.extend(get_line_info(info_line3, info_line2))
 
     for tmp in res_list:
         print(tmp)
@@ -305,14 +318,14 @@ def main_cal(path1, path2, path3):
         row_data.config_cable_length(7.5, 7.5, pd_read_flag=flag, respectively=True)
         # row_data.config_r_sht(1e-7, 1e-7, pd_read_flag=flag, respectively=True)
         row_data.config_r_sht(1e-7, 1e-7, pd_read_flag=False, respectively=True)
-        row_data.config_power(1, '最大', pd_read_flag=flag)
+        row_data.config_power(2, '最大', pd_read_flag=flag)
 
         row_data.config_sp_posi()
         row_data.config_train_signal()
         row_data.config_error()
 
         # interval = row_data.config_interval(1, pd_read_flag=flag)
-        interval = row_data.config_interval(1, pd_read_flag=False)
+        interval = row_data.config_interval(5, pd_read_flag=False)
 
         if data['被串故障模式'] is None:
             print(para['freq_被'], para['被串故障模式'])
